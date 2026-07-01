@@ -1,22 +1,814 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
-   <meta charset="UTF-8">
-   <title> JJK CURSED MATCH</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JJK Cursed Match</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --hero-bg: #0d1f3a;
+    --hero-border: #1e4a8a;
+    --hero-text: #7ab8f5;
+    --villain-bg: #2a0d0d;
+    --villain-border: #8a1e1e;
+    --villain-text: #f57a7a;
+    --gold: #e8c84a;
+    --white: #e8e8f0;
+    --muted: #6a6a80;
+    --gojo-color: #a78bfa;
+    --megumi-color: #60a5fa;
+    --maki-color: #34d399;
+    --nanami-color: #fbbf24;
+    --yuji-color: #f87171;
+    --sukuna-color: #dc2626;
+    --mahito-color: #7c3aed;
+    --choso-color: #991b1b;
+    --kenjaku-color: #4c1d95;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* FLASH OVERLAY */
+  #flash-overlay {
+    position: fixed; inset: 0; pointer-events: none;
+    z-index: 100; opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  /* TECHNIQUE POPUP */
+  #technique-popup {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    z-index: 200; text-align: center;
+    pointer-events: none; opacity: 0;
+    transition: all 0.2s;
+  }
+  #technique-popup.show {
+    opacity: 1; transform: translate(-50%, -50%) scale(1);
+  }
+  .popup-char { font-size: 13px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .popup-technique {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px; line-height: 1;
+    text-shadow: 0 0 30px currentColor;
+  }
+  .popup-sub { font-size: 12px; margin-top: 4px; }
+
+  /* SPAWN ANIMATION */
+  @keyframes spawnIn {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes shakeBoard {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  @keyframes matchPop {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+  }
+  @keyframes fallDown {
+    from { transform: translateY(-40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes pulseGlow {
+    0%,100% { box-shadow: 0 0 8px currentColor; }
+    50% { box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+  }
+
+  /* HEADER */
+  .header {
+    padding: 16px 24px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .game-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .game-title span { color: #dc2626; -webkit-text-fill-color: #dc2626; }
+  .header-score {
+    margin-left: auto;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: var(--gold); letter-spacing: 0.05em;
+  }
+  .header-score small { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); display: block; letter-spacing: 0.08em; margin-bottom: -4px; }
+
+  /* MAIN LAYOUT */
+  .game-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    gap: 0;
+    height: calc(100vh - 64px);
+  }
+
+  /* SIDE PANELS */
+  .side-panel {
+    padding: 16px 14px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 14px;
+    overflow-y: auto;
+  }
+  .side-panel.right { border-right: none; border-left: 1px solid var(--border); }
+
+  .panel-section-label {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+
+  /* BATTLE METER */
+  .battle-meter-wrap { }
+  .meter-track {
+    height: 8px; border-radius: 4px;
+    background: var(--villain-bg);
+    border: 1px solid var(--villain-border);
+    overflow: hidden; margin: 6px 0;
+  }
+  .meter-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #1e4a8a, #60a5fa);
+    transition: width 0.5s ease;
+  }
+  .meter-labels {
+    display: flex; justify-content: space-between;
+    font-size: 10px;
+  }
+  .meter-hero { color: var(--hero-text); font-weight: 600; }
+  .meter-villain { color: var(--villain-text); font-weight: 600; }
+  .meter-warning {
+    font-size: 10px; color: #f87171;
+    margin-top: 4px; display: none;
+  }
+  .meter-warning.show { display: block; }
+
+  /* VILLAIN HP CARDS */
+  .villain-card {
+    background: var(--villain-bg);
+    border: 1px solid var(--villain-border);
+    border-radius: 8px; padding: 8px 10px;
+    transition: border-color 0.3s;
+  }
+  .villain-card.dead {
+    opacity: 0.35; border-color: var(--border);
+    filter: grayscale(1);
+  }
+  .villain-card-top {
+    display: flex; align-items: center; gap: 7px; margin-bottom: 5px;
+  }
+  .villain-icon { font-size: 20px; }
+  .villain-name { font-size: 12px; font-weight: 600; }
+  .villain-technique { font-size: 9px; color: var(--muted); }
+  .villain-hp-bar {
+    height: 4px; border-radius: 2px;
+    background: #2a0d0d; overflow: hidden;
+  }
+  .villain-hp-fill {
+    height: 100%; border-radius: 2px;
+    background: #dc2626; transition: width 0.4s ease;
+  }
+  .villain-hp-text {
+    font-size: 9px; color: var(--muted);
+    text-align: right; margin-top: 2px;
+  }
+
+  /* HERO ROSTER (right panel) */
+  .hero-card {
+    background: var(--hero-bg);
+    border: 1px solid var(--hero-border);
+    border-radius: 8px; padding: 8px 10px;
+  }
+  .hero-card-top {
+    display: flex; align-items: center; gap: 7px; margin-bottom: 3px;
+  }
+  .hero-icon { font-size: 18px; }
+  .hero-name { font-size: 11px; font-weight: 600; }
+  .hero-technique { font-size: 9px; color: var(--muted); }
+  .hero-matches {
+    font-size: 9px; color: var(--hero-text);
+    margin-top: 2px;
+  }
+
+  /* LAST EFFECT LOG */
+  .effect-log {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px;
+    font-size: 10px; color: var(--muted);
+    min-height: 60px;
+    flex: 1;
+  }
+  .effect-log-entry {
+    margin-bottom: 5px; line-height: 1.4;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .effect-log-entry:last-child { border-bottom: none; margin-bottom: 0; }
+  .log-hero { color: var(--hero-text); font-weight: 600; }
+  .log-villain { color: var(--villain-text); font-weight: 600; }
+  .log-technique { color: var(--gold); }
+
+  /* MOVES */
+  .moves-display {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px; color: var(--white); line-height: 1;
+  }
+
+  /* BOARD */
+  .board-area {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px; gap: 12px;
+  }
+  .board-hint {
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  #game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    width: min(420px, 100%);
+  }
+  .tile {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+    position: relative;
+    user-select: none;
+  }
+  .tile:hover { transform: scale(1.06); }
+  .tile.hero-tile {
+    background: var(--hero-bg);
+    border-color: var(--hero-border);
+  }
+  .tile.villain-tile {
+    background: var(--villain-bg);
+    border-color: var(--villain-border);
+  }
+  .tile.selected {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 12px var(--gold);
+    transform: scale(1.1);
+  }
+  .tile.matched {
+    animation: matchPop 0.3s ease forwards;
+  }
+  .tile.spawn {
+    animation: spawnIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  .tile.new-fall {
+    animation: fallDown 0.25s ease forwards;
+  }
+  .tile-emoji { font-size: 22px; line-height: 1; }
+  .tile-label {
+    font-size: 7px; letter-spacing: 0.04em;
+    margin-top: 1px; font-weight: 500;
+  }
+  .tile.hero-tile .tile-label { color: var(--hero-text); }
+  .tile.villain-tile .tile-label { color: var(--villain-text); }
+
+  /* GAME OVER / WIN */
+  #game-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,10,15,0.92);
+    z-index: 300; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px; text-align: center;
+  }
+  #game-overlay.show { display: flex; }
+  .overlay-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px; letter-spacing: 0.05em;
+  }
+  .overlay-title.win { color: var(--gold); text-shadow: 0 0 40px var(--gold); }
+  .overlay-title.lose { color: #dc2626; text-shadow: 0 0 40px #dc2626; }
+  .overlay-score { font-size: 18px; color: var(--muted); }
+  .overlay-score span { color: var(--gold); font-weight: 600; font-size: 24px; }
+  .restart-btn {
+    margin-top: 8px;
+    background: none; border: 2px solid var(--gold);
+    color: var(--gold); font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; letter-spacing: 0.1em;
+    padding: 10px 32px; border-radius: 8px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .restart-btn:hover { background: rgba(232,200,74,0.12); }
+</style>
 </head>
 <body>
-    <h1> JJK CURSED MATCH</h1>
-    <p> Match Heroses. Crush curses.</p>
-    <div id="game-board">
-        <div class="title">🌀</div>
+
+<div id="flash-overlay"></div>
+
+<div id="technique-popup">
+  <div class="popup-char" id="popup-char"></div>
+  <div class="popup-technique" id="popup-technique"></div>
+  <div class="popup-sub" id="popup-sub"></div>
+</div>
+
+<div id="game-overlay">
+  <div class="overlay-title" id="overlay-title"></div>
+  <div class="overlay-score">Final Score: <span id="overlay-score"></span></div>
+  <button class="restart-btn" onclick="initGame()">PLAY AGAIN</button>
+</div>
+
+<div class="header">
+  <div class="game-title">JJK <span>CURSED</span> MATCH</div>
+  <div style="font-size:10px;color:var(--muted);letter-spacing:0.06em;">MATCH HEROES · CRUSH CURSES</div>
+  <div class="header-score">
+    <small>SCORE</small>
+    <span id="score-display">0</span>
+  </div>
+</div>
+
+<div class="game-layout">
+
+  <!-- LEFT PANEL -->
+  <div class="side-panel">
+    <div>
+      <div class="panel-section-label">Battle Meter</div>
+      <div class="battle-meter-wrap">
+        <div class="meter-labels">
+          <span class="meter-hero" id="meter-hero-pct">Heroes 70%</span>
+          <span class="meter-villain" id="meter-villain-pct">Curses 30%</span>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="meter-fill" style="width:70%"></div>
+        </div>
+        <div class="meter-warning" id="meter-warning">⚠ Curses overwhelming the board!</div>
+      </div>
     </div>
-    <script>
-        const board = document.getElementById('game-board')
-        for (let i= 0; i< 42; i++) {
-            const tile = document.createElement("div")
-            tile.textContent = "⬜"
-            board.appendChild(tile)
+
+    <div>
+      <div class="panel-section-label">Active Curses</div>
+      <div id="villain-cards" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+
+    <div style="margin-top:auto;">
+      <div class="panel-section-label">Moves Left</div>
+      <div class="moves-display" id="moves-display">20</div>
+    </div>
+  </div>
+
+  <!-- BOARD -->
+  <div class="board-area">
+    <div class="board-hint">Click a tile, then click an adjacent tile to swap</div>
+    <div id="game-board"></div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="side-panel right">
+    <div>
+      <div class="panel-section-label">Hero Roster</div>
+      <div id="hero-cards" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+    <div>
+      <div class="panel-section-label">Technique Log</div>
+      <div class="effect-log" id="effect-log">
+        <div style="color:var(--muted);font-style:italic;">Match hero tiles to activate techniques...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const HEROES = [
+  { id: 'gojo',   name: 'Gojo',    emoji: '🌀', technique: 'Hollow Purple',           color: '#a78bfa', dmg: 80 },
+  { id: 'megumi', name: 'Megumi',  emoji: '🐾', technique: 'Ten Shadows',             color: '#60a5fa', dmg: 50 },
+  { id: 'maki',   name: 'Maki',    emoji: '⚔️',  technique: 'Cursed Tool Strike',      color: '#34d399', dmg: 45 },
+  { id: 'nanami', name: 'Nanami',  emoji: '🪢', technique: 'Ratio Technique',         color: '#fbbf24', dmg: 55 },
+  { id: 'yuji',   name: 'Yuji',    emoji: '👊', technique: 'Divergent Fist',          color: '#f87171', dmg: 60 },
+];
+
+const VILLAINS = [
+  { id: 'sukuna',   name: 'Sukuna',   emoji: '👺', technique: 'Dismantle',                  color: '#dc2626', maxHp: 200, hp: 200 },
+  { id: 'mahito',   name: 'Mahito',   emoji: '🩸', technique: 'Idle Transfiguration',       color: '#7c3aed', maxHp: 140, hp: 140 },
+  { id: 'choso',    name: 'Choso',    emoji: '🩺', technique: 'Piercing Blood',              color: '#991b1b', maxHp: 120, hp: 120 },
+  { id: 'kenjaku', name: 'Kenjaku', emoji: '🧠', technique: 'Cursed Spirit Manipulation', color: '#4c1d95', maxHp: 160, hp: 160 },
+];
+
+const ROWS = 7, COLS = 6;
+let board = [];
+let selected = null;
+let score = 0;
+let moves = 20;
+let heroMatchCounts = {};
+let isAnimating = false;
+let logEntries = [];
+let meterValue = 70;
+
+function heroById(id) { return HEROES.find(h => h.id === id); }
+function villainById(id) { return VILLAINS.find(v => v.id === id); }
+function aliveVillains() { return VILLAINS.filter(v => v.hp > 0); }
+
+function randomHero() { return HEROES[Math.floor(Math.random() * HEROES.length)].id; }
+function randomVillain() {
+  const alive = aliveVillains();
+  if (!alive.length) return null;
+  return alive[Math.floor(Math.random() * alive.length)].id;
+}
+
+function randomTile(villainBias = 0.25) {
+  return Math.random() < villainBias ? randomVillain() || randomHero() : randomHero();
+}
+
+function isHeroId(id) { return HEROES.some(h => h.id === id); }
+function isVillainId(id) { return VILLAINS.some(v => v.id === id); }
+
+// ---- INIT ----
+function initGame() {
+  VILLAINS.forEach(v => { v.hp = v.maxHp; });
+  HEROES.forEach(h => { heroMatchCounts[h.id] = 0; });
+  score = 0; moves = 20; meterValue = 70;
+  selected = null; logEntries = [];
+  board = [];
+  for (let r = 0; r < ROWS; r++) {
+    board[r] = [];
+    for (let c = 0; c < COLS; c++) {
+      board[r][c] = randomTile(0.22);
+    }
+  }
+  document.getElementById('game-overlay').classList.remove('show');
+  renderAll();
+}
+
+// ---- RENDER ----
+function renderAll() {
+  renderBoard();
+  renderSidePanels();
+  renderScore();
+  renderMoves();
+  renderMeter();
+}
+
+function renderBoard() {
+  const boardEl = document.getElementById('game-board');
+  boardEl.innerHTML = '';
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      boardEl.appendChild(makeTileEl(r, c));
+    }
+  }
+}
+
+function makeTileEl(r, c, animate = '') {
+  const id = board[r][c];
+  if (!id) {
+    const blank = document.createElement('div');
+    blank.style.aspectRatio = '1';
+    return blank;
+  }
+  const isHero = isHeroId(id);
+  const char = isHero ? heroById(id) : villainById(id);
+  const tile = document.createElement('div');
+  tile.className = `tile ${isHero ? 'hero-tile' : 'villain-tile'}${animate ? ' ' + animate : ''}`;
+  tile.dataset.row = r; tile.dataset.col = c;
+  if (isHero) tile.style.setProperty('--char-color', char.color);
+  tile.innerHTML = `<div class="tile-emoji">${char.emoji}</div><div class="tile-label">${char.name.toUpperCase()}</div>`;
+  tile.addEventListener('click', () => onTileClick(r, c));
+  return tile;
+}
+
+function renderSidePanels() {
+  // Villain cards
+  const vc = document.getElementById('villain-cards');
+  vc.innerHTML = '';
+  VILLAINS.forEach(v => {
+    const pct = Math.max(0, Math.round((v.hp / v.maxHp) * 100));
+    const card = document.createElement('div');
+    card.className = `villain-card${v.hp <= 0 ? ' dead' : ''}`;
+    card.id = `vcard-${v.id}`;
+    card.innerHTML = `
+      <div class="villain-card-top">
+        <span class="villain-icon">${v.emoji}</span>
+        <div><div class="villain-name" style="color:${v.color}">${v.name}</div>
+        <div class="villain-technique">${v.technique}</div></div>
+      </div>
+      <div class="villain-hp-bar"><div class="villain-hp-fill" style="width:${pct}%;background:${v.color}"></div></div>
+      <div class="villain-hp-text">${v.hp <= 0 ? 'DEFEATED' : v.hp + ' / ' + v.maxHp}</div>`;
+    vc.appendChild(card);
+  });
+
+  // Hero cards
+  const hc = document.getElementById('hero-cards');
+  hc.innerHTML = '';
+  HEROES.forEach(h => {
+    const card = document.createElement('div');
+    card.className = 'hero-card';
+    card.innerHTML = `
+      <div class="hero-card-top">
+        <span class="hero-icon">${h.emoji}</span>
+        <div><div class="hero-name" style="color:${h.color}">${h.name}</div>
+        <div class="hero-technique">${h.technique}</div></div>
+      </div>
+      <div class="hero-matches">Matches: ${heroMatchCounts[h.id] || 0}</div>`;
+    hc.appendChild(card);
+  });
+}
+
+function renderScore() {
+  document.getElementById('score-display').textContent = score.toLocaleString();
+}
+function renderMoves() {
+  document.getElementById('moves-display').textContent = moves;
+}
+function renderMeter() {
+  const fill = document.getElementById('meter-fill');
+  fill.style.width = meterValue + '%';
+  document.getElementById('meter-hero-pct').textContent = `Heroes ${Math.round(meterValue)}%`;
+  document.getElementById('meter-villain-pct').textContent = `Curses ${Math.round(100 - meterValue)}%`;
+  const warn = document.getElementById('meter-warning');
+  warn.classList.toggle('show', meterValue < 40);
+}
+
+// ---- TILE CLICK ----
+function onTileClick(r, c) {
+  if (isAnimating) return;
+  const boardEl = document.getElementById('game-board');
+  const tiles = boardEl.querySelectorAll('.tile');
+
+  if (selected === null) {
+    selected = { r, c };
+    tiles.forEach(t => {
+      if (parseInt(t.dataset.row) === r && parseInt(t.dataset.col) === c) t.classList.add('selected');
+    });
+  } else {
+    const { r: sr, c: sc } = selected;
+    tiles.forEach(t => t.classList.remove('selected'));
+
+    if (sr === r && sc === c) { selected = null; return; }
+
+    const dr = Math.abs(r - sr), dc = Math.abs(c - sc);
+    if ((dr === 1 && dc === 0) || (dr === 0 && dc === 1)) {
+      selected = null;
+      doSwap(sr, sc, r, c);
+    } else {
+      selected = { r, c };
+      tiles.forEach(t => {
+        if (parseInt(t.dataset.row) === r && parseInt(t.dataset.col) === c) t.classList.add('selected');
+      });
+    }
+  }
+}
+
+// ---- SWAP & MATCH ----
+function doSwap(r1, c1, r2, c2) {
+  isAnimating = true;
+  const tmp = board[r1][c1];
+  board[r1][c1] = board[r2][c2];
+  board[r2][c2] = tmp;
+
+  const matches = findMatches();
+  if (matches.length === 0) {
+    // Swap back
+    board[r2][c2] = board[r1][c1];
+    board[r1][c1] = tmp;
+    isAnimating = false;
+    renderBoard();
+    return;
+  }
+
+  moves--;
+  renderMoves();
+  processMatches(matches);
+}
+
+function findMatches() {
+  const matched = new Set();
+  // Horizontal
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS - 2; c++) {
+      const id = board[r][c];
+      if (id && id === board[r][c+1] && id === board[r][c+2]) {
+        let len = 3;
+        while (c + len < COLS && board[r][c+len] === id) len++;
+        for (let i = 0; i < len; i++) matched.add(`${r},${c+i}`);
+      }
+    }
+  }
+  // Vertical
+  for (let c = 0; c < COLS; c++) {
+    for (let r = 0; r < ROWS - 2; r++) {
+      const id = board[r][c];
+      if (id && id === board[r+1][c] && id === board[r+2][c]) {
+        let len = 3;
+        while (r + len < ROWS && board[r+len][c] === id) len++;
+        for (let i = 0; i < len; i++) matched.add(`${r+i},${c}`);
+      }
+    }
+  }
+  return [...matched].map(k => { const [r,c] = k.split(','); return { r: +r, c: +c, id: board[+r][+c] }; });
+}
+
+function processMatches(matches) {
+  // Group by character
+  const byChar = {};
+  matches.forEach(({ r, c, id }) => {
+    if (!byChar[id]) byChar[id] = [];
+    byChar[id].push({ r, c });
+  });
+
+  // Animate matched tiles
+  const boardEl = document.getElementById('game-board');
+  matches.forEach(({ r, c }) => {
+    const tile = boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+    if (tile) tile.classList.add('matched');
+  });
+
+  setTimeout(() => {
+    // Clear matched cells
+    matches.forEach(({ r, c }) => { board[r][c] = null; });
+
+    // Handle each matched character
+    let heroMatched = false, villainMatched = false;
+    let heroMatchInfo = null, villainMatchInfo = null;
+
+    Object.entries(byChar).forEach(([id, cells]) => {
+      if (isHeroId(id)) {
+        heroMatched = true;
+        const hero = heroById(id);
+        heroMatchCounts[id] = (heroMatchCounts[id] || 0) + 1;
+        const matchSize = cells.length;
+        const multiplier = matchSize >= 5 ? 3 : matchSize >= 4 ? 2 : 1;
+        // Deal damage to a random alive villain
+        const alive = aliveVillains();
+        if (alive.length > 0) {
+          const target = alive[Math.floor(Math.random() * alive.length)];
+          const dmg = hero.dmg * multiplier;
+          target.hp = Math.max(0, target.hp - dmg);
+          const pts = dmg * 10;
+          score += pts;
+          meterValue = Math.min(95, meterValue + 5);
+          heroMatchInfo = { hero, target, dmg, pts, matchSize };
+          addLog(`<span class="log-hero">${hero.emoji} ${hero.name}</span> used <span class="log-technique">${hero.technique}</span> → <span class="log-villain">${target.name}</span> took ${dmg} dmg`);
         }
-    </script>
+      } else if (isVillainId(id)) {
+        villainMatched = true;
+        const villain = villainById(id);
+        villainMatchInfo = { villain };
+        meterValue = Math.max(5, meterValue - 10);
+        addLog(`<span class="log-villain">⚠ ${villain.emoji} ${villain.name}</span> used <span class="log-technique">${villain.technique}</span> — villain spawns!`);
+      }
+    });
+
+    // Apply gravity
+    applyGravity();
+
+    // Refill
+    refillBoard(villainMatched);
+
+    renderBoard();
+    renderSidePanels();
+    renderScore();
+    renderMeter();
+
+    // Show effects
+    if (heroMatchInfo) {
+      showTechniquePopup(heroMatchInfo.hero, false);
+    }
+    if (villainMatched && villainMatchInfo) {
+      setTimeout(() => {
+        showVillainEffect(villainMatchInfo.villain);
+      }, heroMatchInfo ? 1200 : 0);
+    }
+
+    // Check cascades
+    setTimeout(() => {
+      const cascades = findMatches();
+      if (cascades.length > 0) {
+        processMatches(cascades);
+      } else {
+        isAnimating = false;
+        checkGameEnd();
+      }
+    }, villainMatched ? 1600 : 800);
+
+  }, 350);
+}
+
+function applyGravity() {
+  for (let c = 0; c < COLS; c++) {
+    let writeRow = ROWS - 1;
+    for (let r = ROWS - 1; r >= 0; r--) {
+      if (board[r][c] !== null) {
+        board[writeRow][c] = board[r][c];
+        if (writeRow !== r) board[r][c] = null;
+        writeRow--;
+      }
+    }
+    for (let r = writeRow; r >= 0; r--) board[r][c] = null;
+  }
+}
+
+function refillBoard(spawnVillain) {
+  // If villain matched, spawn extra villain tile
+  let extraVillainPos = null;
+  if (spawnVillain) {
+    const nullCells = [];
+    for (let r = 0; r < ROWS; r++)
+      for (let c = 0; c < COLS; c++)
+        if (!board[r][c]) nullCells.push({ r, c });
+    if (nullCells.length > 0) {
+      extraVillainPos = nullCells[Math.floor(Math.random() * nullCells.length)];
+    }
+  }
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (!board[r][c]) {
+        if (extraVillainPos && extraVillainPos.r === r && extraVillainPos.c === c) {
+          board[r][c] = randomVillain() || randomHero();
+          extraVillainPos = null;
+        } else {
+          board[r][c] = randomTile(0.2);
+        }
+      }
+    }
+  }
+}
+
+// ---- EFFECTS ----
+function showTechniquePopup(char, isVillain) {
+  const popup = document.getElementById('technique-popup');
+  const charEl = document.getElementById('popup-char');
+  const techEl = document.getElementById('popup-technique');
+  const subEl = document.getElementById('popup-sub');
+
+  charEl.textContent = char.name.toUpperCase();
+  techEl.textContent = char.technique.toUpperCase();
+  techEl.style.color = char.color;
+  subEl.textContent = isVillain ? '— curse energy surges —' : '— technique activated —';
+  subEl.style.color = isVillain ? '#f87171' : '#a3a3bc';
+
+  // Flash
+  const flash = document.getElementById('flash-overlay');
+  flash.style.background = isVillain ? 'rgba(220,38,38,0.18)' : `${char.color}22`;
+  flash.style.opacity = '1';
+  setTimeout(() => flash.style.opacity = '0', 200);
+
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 1100);
+}
+
+function showVillainEffect(villain) {
+  showTechniquePopup(villain, true);
+  // Board shake
+  const boardEl = document.getElementById('game-board');
+  boardEl.style.animation = 'shakeBoard 0.4s ease';
+  setTimeout(() => boardEl.style.animation = '', 400);
+}
+
+function addLog(html) {
+  logEntries.unshift(html);
+  if (logEntries.length > 6) logEntries.pop();
+  const logEl = document.getElementById('effect-log');
+  logEl.innerHTML = logEntries.map(e => `<div class="effect-log-entry">${e}</div>`).join('');
+}
+
+// ---- GAME END ----
+function checkGameEnd() {
+  const allDead = VILLAINS.every(v => v.hp <= 0);
+  if (allDead) { showOverlay(true); return; }
+  if (moves <= 0) { showOverlay(false); return; }
+}
+
+function showOverlay(win) {
+  const overlay = document.getElementById('game-overlay');
+  const title = document.getElementById('overlay-title');
+  const scoreEl = document.getElementById('overlay-score');
+  title.textContent = win ? 'MISSION COMPLETE' : 'CURSES PREVAIL';
+  title.className = `overlay-title ${win ? 'win' : 'lose'}`;
+  scoreEl.textContent = score.toLocaleString();
+  overlay.classList.add('show');
+}
+
+// ---- START ----
+initGame();
+</script>
 </body>
-  
+</html>
