@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+   <meta charset="UTF-8">
+   <title> JJK CURSED MATCH</title>
+</head>
+<body>
+    <h1> JJK CURSED MATCH</h1>
+    <p> Match Heroses. Crush curses.</p>
+    <div id="game-board">
+        <div class="title">🌀</div>
+    </div>
+    <script>
+        const board = document.getElementById('game-board')
+        for (let i= 0; i< 42; i++) {
+            const tile = document.createElement("div")
+            tile.textContent = "⬜"
+            board.appendChild(tile)
+        }
+    </script>
+</body>
+  
