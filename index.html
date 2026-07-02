@@ -548,7 +548,6 @@ function renderMeter() {
 
 // ---- TILE CLICK ----
 function onTileClick(r, c) {
-  console.log("clicked", r, c)
   if (isAnimating) return;
   const boardEl = document.getElementById('game-board');
   const tiles = boardEl.querySelectorAll('.tile');
@@ -590,12 +589,9 @@ function doSwap(r1, c1, r2, c2) {
     board[r2][c2] = board[r1][c1];
     board[r1][c1] = tmp;
     isAnimating = false;
-if (!hasValidMoves()) {
-  setTimeout(() => shuffleBoard(), 400);
-}
-checkGameEnd();
-
-    
+    renderBoard();
+    return;
+  }
 
   moves--;
   renderMoves();
@@ -727,45 +723,35 @@ function applyGravity() {
     }
     for (let r = writeRow; r >= 0; r--) board[r][c] = null;
   }
-
-
-
-function shuffleBoard() {
-  do {
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        board[r][c] = randomTile(0.22);
-      }
-    }
-  } while (!hasValidMoves());
-  addLog(`<span style="color:var(--gold)">⚡ Board shuffled — no moves were available</span>`);
-  renderBoard();
 }
-function hasValidMoves() {
+
+function refillBoard(spawnVillain) {
+  // If villain matched, spawn extra villain tile
+  let extraVillainPos = null;
+  if (spawnVillain) {
+    const nullCells = [];
+    for (let r = 0; r < ROWS; r++)
+      for (let c = 0; c < COLS; c++)
+        if (!board[r][c]) nullCells.push({ r, c });
+    if (nullCells.length > 0) {
+      extraVillainPos = nullCells[Math.floor(Math.random() * nullCells.length)];
+    }
+  }
+
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
-      // check swap right
-      if (c < COLS - 1) {
-        const tmp = board[r][c];
-        board[r][c] = board[r][c+1];
-        board[r][c+1] = tmp;
-        if (findMatches().length > 0) {
-          return true;
-        }
-      }
-      // check swap down
-      if (r < ROWS - 1) {
-        const tmp = board[r][c];
-        board[r][c] = board[r+1][c];
-        board[r+1][c] = tmp;
-        if (findMatches().length > 0) {
-          return true;
+      if (!board[r][c]) {
+        if (extraVillainPos && extraVillainPos.r === r && extraVillainPos.c === c) {
+          board[r][c] = randomVillain() || randomHero();
+          extraVillainPos = null;
+        } else {
+          board[r][c] = randomTile(0.2);
         }
       }
     }
   }
-  return false;
 }
+
 // ---- EFFECTS ----
 function showTechniquePopup(char, isVillain) {
   const popup = document.getElementById('technique-popup');
