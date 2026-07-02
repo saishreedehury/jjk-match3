@@ -376,7 +376,8 @@
 
   <!-- BOARD -->
   <div class="board-area">
-    <div class="board-hint">Click a tile, then click an adjacent tile to swap</div>
+     <div class="board-hint">Click a tile, then click an adjacent tile to swap</div>
+<button onclick="showHint()" style="margin-top:8px;background:none;border:1px solid #e8c84a;color:#e8c84a;padding:6px 18px;border-radius:6px;cursor:pointer;font-size:12px;letter-spacing:0.06em;">💡 HINT</button>
     <div id="game-board"></div>
   </div>
 
@@ -456,7 +457,13 @@ function initGame() {
   document.getElementById('game-overlay').classList.remove('show');
   renderAll();
 }
-
+while (!hasValidMoves()) {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      board[r][c] = randomTile(0.22);
+    }
+  }
+}
 // ---- RENDER ----
 function renderAll() {
   renderBoard();
@@ -681,6 +688,13 @@ function processMatches(matches) {
 
     // Refill
     refillBoard(villainMatched);
+    while (!hasValidMoves()) {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      board[r][c] = randomTile(0.22);
+    }
+  }
+}
 
     renderBoard();
     renderSidePanels();
@@ -737,6 +751,7 @@ function refillBoard(spawnVillain) {
       extraVillainPos = nullCells[Math.floor(Math.random() * nullCells.length)];
     }
   }
+  
 
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
