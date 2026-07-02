@@ -21,15 +21,6 @@
     --gold: #e8c84a;
     --white: #e8e8f0;
     --muted: #6a6a80;
-    --gojo-color: #a78bfa;
-    --megumi-color: #60a5fa;
-    --maki-color: #34d399;
-    --nanami-color: #fbbf24;
-    --yuji-color: #f87171;
-    --sukuna-color: #dc2626;
-    --mahito-color: #7c3aed;
-    --choso-color: #991b1b;
-    --kenjaku-color: #4c1d95;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,14 +33,12 @@
     overflow-x: hidden;
   }
 
-  /* FLASH OVERLAY */
   #flash-overlay {
     position: fixed; inset: 0; pointer-events: none;
     z-index: 100; opacity: 0;
     transition: opacity 0.1s;
   }
 
-  /* TECHNIQUE POPUP */
   #technique-popup {
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%) scale(0.8);
@@ -68,7 +57,6 @@
   }
   .popup-sub { font-size: 12px; margin-top: 4px; }
 
-  /* SPAWN ANIMATION */
   @keyframes spawnIn {
     0% { transform: scale(0) rotate(-20deg); opacity: 0; }
     60% { transform: scale(1.2) rotate(5deg); opacity: 1; }
@@ -90,12 +78,7 @@
     from { transform: translateY(-40px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
   }
-  @keyframes pulseGlow {
-    0%,100% { box-shadow: 0 0 8px currentColor; }
-    50% { box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-  }
 
-  /* HEADER */
   .header {
     padding: 16px 24px 12px;
     border-bottom: 1px solid var(--border);
@@ -115,7 +98,6 @@
   }
   .header-score small { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); display: block; letter-spacing: 0.08em; margin-bottom: -4px; }
 
-  /* MAIN LAYOUT */
   .game-layout {
     display: grid;
     grid-template-columns: 200px 1fr 200px;
@@ -123,7 +105,6 @@
     height: calc(100vh - 64px);
   }
 
-  /* SIDE PANELS */
   .side-panel {
     padding: 16px 14px;
     border-right: 1px solid var(--border);
@@ -137,8 +118,6 @@
     color: var(--muted); margin-bottom: 6px;
   }
 
-  /* BATTLE METER */
-  .battle-meter-wrap { }
   .meter-track {
     height: 8px; border-radius: 4px;
     background: var(--villain-bg);
@@ -162,12 +141,10 @@
   }
   .meter-warning.show { display: block; }
 
-  /* VILLAIN HP CARDS */
   .villain-card {
     background: var(--villain-bg);
     border: 1px solid var(--villain-border);
     border-radius: 8px; padding: 8px 10px;
-    transition: border-color 0.3s;
   }
   .villain-card.dead {
     opacity: 0.35; border-color: var(--border);
@@ -192,7 +169,6 @@
     text-align: right; margin-top: 2px;
   }
 
-  /* HERO ROSTER (right panel) */
   .hero-card {
     background: var(--hero-bg);
     border: 1px solid var(--hero-border);
@@ -204,19 +180,14 @@
   .hero-icon { font-size: 18px; }
   .hero-name { font-size: 11px; font-weight: 600; }
   .hero-technique { font-size: 9px; color: var(--muted); }
-  .hero-matches {
-    font-size: 9px; color: var(--hero-text);
-    margin-top: 2px;
-  }
+  .hero-matches { font-size: 9px; color: var(--hero-text); margin-top: 2px; }
 
-  /* LAST EFFECT LOG */
   .effect-log {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 8px; padding: 8px 10px;
     font-size: 10px; color: var(--muted);
-    min-height: 60px;
-    flex: 1;
+    min-height: 60px; flex: 1;
   }
   .effect-log-entry {
     margin-bottom: 5px; line-height: 1.4;
@@ -228,23 +199,19 @@
   .log-villain { color: var(--villain-text); font-weight: 600; }
   .log-technique { color: var(--gold); }
 
-  /* MOVES */
   .moves-display {
     text-align: center;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 36px; color: var(--white); line-height: 1;
   }
 
-  /* BOARD */
   .board-area {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 20px; gap: 12px;
   }
-  .board-hint {
-    font-size: 11px; color: var(--muted);
-    letter-spacing: 0.06em;
-  }
+  .board-hint { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+
   #game-board {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -263,37 +230,21 @@
     user-select: none;
   }
   .tile:hover { transform: scale(1.06); }
-  .tile.hero-tile {
-    background: var(--hero-bg);
-    border-color: var(--hero-border);
-  }
-  .tile.villain-tile {
-    background: var(--villain-bg);
-    border-color: var(--villain-border);
-  }
+  .tile.hero-tile { background: var(--hero-bg); border-color: var(--hero-border); }
+  .tile.villain-tile { background: var(--villain-bg); border-color: var(--villain-border); }
   .tile.selected {
     border-color: var(--gold) !important;
     box-shadow: 0 0 12px var(--gold);
     transform: scale(1.1);
   }
-  .tile.matched {
-    animation: matchPop 0.3s ease forwards;
-  }
-  .tile.spawn {
-    animation: spawnIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
-  .tile.new-fall {
-    animation: fallDown 0.25s ease forwards;
-  }
+  .tile.matched { animation: matchPop 0.3s ease forwards; }
+  .tile.spawn { animation: spawnIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  .tile.new-fall { animation: fallDown 0.25s ease forwards; }
   .tile-emoji { font-size: 22px; line-height: 1; }
-  .tile-label {
-    font-size: 7px; letter-spacing: 0.04em;
-    margin-top: 1px; font-weight: 500;
-  }
+  .tile-label { font-size: 7px; letter-spacing: 0.04em; margin-top: 1px; font-weight: 500; }
   .tile.hero-tile .tile-label { color: var(--hero-text); }
   .tile.villain-tile .tile-label { color: var(--villain-text); }
 
-  /* GAME OVER / WIN */
   #game-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(10,10,15,0.92);
@@ -347,11 +298,10 @@
 
 <div class="game-layout">
 
-  <!-- LEFT PANEL -->
   <div class="side-panel">
     <div>
       <div class="panel-section-label">Battle Meter</div>
-      <div class="battle-meter-wrap">
+      <div>
         <div class="meter-labels">
           <span class="meter-hero" id="meter-hero-pct">Heroes 70%</span>
           <span class="meter-villain" id="meter-villain-pct">Curses 30%</span>
@@ -362,26 +312,22 @@
         <div class="meter-warning" id="meter-warning">⚠ Curses overwhelming the board!</div>
       </div>
     </div>
-
     <div>
       <div class="panel-section-label">Active Curses</div>
       <div id="villain-cards" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
-
     <div style="margin-top:auto;">
       <div class="panel-section-label">Moves Left</div>
       <div class="moves-display" id="moves-display">20</div>
     </div>
   </div>
 
-  <!-- BOARD -->
   <div class="board-area">
-     <div class="board-hint">Click a tile, then click an adjacent tile to swap</div>
-<button onclick="showHint()" style="margin-top:8px;background:none;border:1px solid #e8c84a;color:#e8c84a;padding:6px 18px;border-radius:6px;cursor:pointer;font-size:12px;letter-spacing:0.06em;">💡 HINT</button>
+    <div class="board-hint">Click a tile, then click an adjacent tile to swap</div>
+    <button onclick="showHint()" style="background:none;border:1px solid #e8c84a;color:#e8c84a;padding:6px 18px;border-radius:6px;cursor:pointer;font-size:12px;letter-spacing:0.06em;">💡 HINT</button>
     <div id="game-board"></div>
   </div>
 
-  <!-- RIGHT PANEL -->
   <div class="side-panel right">
     <div>
       <div class="panel-section-label">Hero Roster</div>
@@ -399,17 +345,17 @@
 
 <script>
 const HEROES = [
-  { id: 'gojo',   name: 'Gojo',    emoji: '🌀', technique: 'Hollow Purple',           color: '#a78bfa', dmg: 80 },
-  { id: 'megumi', name: 'Megumi',  emoji: '🐾', technique: 'Ten Shadows',             color: '#60a5fa', dmg: 50 },
-  { id: 'maki',   name: 'Maki',    emoji: '⚔️',  technique: 'Cursed Tool Strike',      color: '#34d399', dmg: 45 },
-  { id: 'nanami', name: 'Nanami',  emoji: '🪢', technique: 'Ratio Technique',         color: '#fbbf24', dmg: 55 },
-  { id: 'yuji',   name: 'Yuji',    emoji: '👊', technique: 'Divergent Fist',          color: '#f87171', dmg: 60 },
+  { id: 'gojo',   name: 'Gojo',   emoji: '🌀', technique: 'Hollow Purple',          color: '#a78bfa', dmg: 80 },
+  { id: 'megumi', name: 'Megumi', emoji: '🐾', technique: 'Ten Shadows',            color: '#60a5fa', dmg: 50 },
+  { id: 'maki',   name: 'Maki',   emoji: '⚔️',  technique: 'Cursed Tool Strike',     color: '#34d399', dmg: 45 },
+  { id: 'nanami', name: 'Nanami', emoji: '🪢', technique: 'Ratio Technique',        color: '#fbbf24', dmg: 55 },
+  { id: 'yuji',   name: 'Yuji',   emoji: '👊', technique: 'Divergent Fist',         color: '#f87171', dmg: 60 },
 ];
 
 const VILLAINS = [
-  { id: 'sukuna',   name: 'Sukuna',   emoji: '👺', technique: 'Dismantle',                  color: '#dc2626', maxHp: 200, hp: 200 },
-  { id: 'mahito',   name: 'Mahito',   emoji: '🩸', technique: 'Idle Transfiguration',       color: '#7c3aed', maxHp: 140, hp: 140 },
-  { id: 'choso',    name: 'Choso',    emoji: '🩺', technique: 'Piercing Blood',              color: '#991b1b', maxHp: 120, hp: 120 },
+  { id: 'sukuna',  name: 'Sukuna',  emoji: '👺', technique: 'Dismantle',                 color: '#dc2626', maxHp: 200, hp: 200 },
+  { id: 'mahito',  name: 'Mahito',  emoji: '🩸', technique: 'Idle Transfiguration',      color: '#7c3aed', maxHp: 140, hp: 140 },
+  { id: 'choso',   name: 'Choso',   emoji: '🩺', technique: 'Piercing Blood',             color: '#991b1b', maxHp: 120, hp: 120 },
   { id: 'kenjaku', name: 'Kenjaku', emoji: '🧠', technique: 'Cursed Spirit Manipulation', color: '#4c1d95', maxHp: 160, hp: 160 },
 ];
 
@@ -426,20 +372,109 @@ let meterValue = 70;
 function heroById(id) { return HEROES.find(h => h.id === id); }
 function villainById(id) { return VILLAINS.find(v => v.id === id); }
 function aliveVillains() { return VILLAINS.filter(v => v.hp > 0); }
-
 function randomHero() { return HEROES[Math.floor(Math.random() * HEROES.length)].id; }
 function randomVillain() {
   const alive = aliveVillains();
   if (!alive.length) return null;
   return alive[Math.floor(Math.random() * alive.length)].id;
 }
-
 function randomTile(villainBias = 0.25) {
   return Math.random() < villainBias ? randomVillain() || randomHero() : randomHero();
 }
-
 function isHeroId(id) { return HEROES.some(h => h.id === id); }
 function isVillainId(id) { return VILLAINS.some(v => v.id === id); }
+
+// ---- VALID MOVES CHECK ----
+function hasValidMoves() {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (c < COLS - 1) {
+        const tmp = board[r][c];
+        board[r][c] = board[r][c+1];
+        board[r][c+1] = tmp;
+        if (findMatches().length > 0) {
+          board[r][c+1] = board[r][c];
+          board[r][c] = tmp;
+          return true;
+        }
+        board[r][c+1] = board[r][c];
+        board[r][c] = tmp;
+      }
+      if (r < ROWS - 1) {
+        const tmp = board[r][c];
+        board[r][c] = board[r+1][c];
+        board[r+1][c] = tmp;
+        if (findMatches().length > 0) {
+          board[r+1][c] = board[r][c];
+          board[r][c] = tmp;
+          return true;
+        }
+        board[r+1][c] = board[r][c];
+        board[r][c] = tmp;
+      }
+    }
+  }
+  return false;
+}
+
+function reshuffleUntilValid() {
+  while (!hasValidMoves()) {
+    for (let r = 0; r < ROWS; r++)
+      for (let c = 0; c < COLS; c++)
+        board[r][c] = randomTile(0.22);
+  }
+}
+
+// ---- HINT ----
+function showHint() {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (c < COLS - 1) {
+        const tmp = board[r][c];
+        board[r][c] = board[r][c+1];
+        board[r][c+1] = tmp;
+        if (findMatches().length > 0) {
+          board[r][c+1] = board[r][c];
+          board[r][c] = tmp;
+          highlightHint(r, c, r, c+1);
+          return;
+        }
+        board[r][c+1] = board[r][c];
+        board[r][c] = tmp;
+      }
+      if (r < ROWS - 1) {
+        const tmp = board[r][c];
+        board[r][c] = board[r+1][c];
+        board[r+1][c] = tmp;
+        if (findMatches().length > 0) {
+          board[r+1][c] = board[r][c];
+          board[r][c] = tmp;
+          highlightHint(r, c, r+1, c);
+          return;
+        }
+        board[r+1][c] = board[r][c];
+        board[r][c] = tmp;
+      }
+    }
+  }
+}
+
+function highlightHint(r1, c1, r2, c2) {
+  const boardEl = document.getElementById('game-board');
+  const tiles = boardEl.querySelectorAll('.tile');
+  tiles.forEach(t => {
+    const r = parseInt(t.dataset.row);
+    const c = parseInt(t.dataset.col);
+    if ((r === r1 && c === c1) || (r === r2 && c === c2)) {
+      t.style.boxShadow = '0 0 16px #e8c84a';
+      t.style.borderColor = '#e8c84a';
+      setTimeout(() => {
+        t.style.boxShadow = '';
+        t.style.borderColor = '';
+      }, 1500);
+    }
+  });
+}
 
 // ---- INIT ----
 function initGame() {
@@ -454,16 +489,11 @@ function initGame() {
       board[r][c] = randomTile(0.22);
     }
   }
+  reshuffleUntilValid();
   document.getElementById('game-overlay').classList.remove('show');
   renderAll();
 }
-while (!hasValidMoves()) {
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      board[r][c] = randomTile(0.22);
-    }
-  }
-}
+
 // ---- RENDER ----
 function renderAll() {
   renderBoard();
@@ -483,7 +513,7 @@ function renderBoard() {
   }
 }
 
-function makeTileEl(r, c, animate = '') {
+function makeTileEl(r, c) {
   const id = board[r][c];
   if (!id) {
     const blank = document.createElement('div');
@@ -493,35 +523,34 @@ function makeTileEl(r, c, animate = '') {
   const isHero = isHeroId(id);
   const char = isHero ? heroById(id) : villainById(id);
   const tile = document.createElement('div');
-  tile.className = `tile ${isHero ? 'hero-tile' : 'villain-tile'}${animate ? ' ' + animate : ''}`;
-  tile.dataset.row = r; tile.dataset.col = c;
-  if (isHero) tile.style.setProperty('--char-color', char.color);
+  tile.className = `tile ${isHero ? 'hero-tile' : 'villain-tile'}`;
+  tile.dataset.row = r;
+  tile.dataset.col = c;
   tile.innerHTML = `<div class="tile-emoji">${char.emoji}</div><div class="tile-label">${char.name.toUpperCase()}</div>`;
   tile.addEventListener('click', () => onTileClick(r, c));
   return tile;
 }
 
 function renderSidePanels() {
-  // Villain cards
   const vc = document.getElementById('villain-cards');
   vc.innerHTML = '';
   VILLAINS.forEach(v => {
     const pct = Math.max(0, Math.round((v.hp / v.maxHp) * 100));
     const card = document.createElement('div');
     card.className = `villain-card${v.hp <= 0 ? ' dead' : ''}`;
-    card.id = `vcard-${v.id}`;
     card.innerHTML = `
       <div class="villain-card-top">
         <span class="villain-icon">${v.emoji}</span>
-        <div><div class="villain-name" style="color:${v.color}">${v.name}</div>
-        <div class="villain-technique">${v.technique}</div></div>
+        <div>
+          <div class="villain-name" style="color:${v.color}">${v.name}</div>
+          <div class="villain-technique">${v.technique}</div>
+        </div>
       </div>
       <div class="villain-hp-bar"><div class="villain-hp-fill" style="width:${pct}%;background:${v.color}"></div></div>
       <div class="villain-hp-text">${v.hp <= 0 ? 'DEFEATED' : v.hp + ' / ' + v.maxHp}</div>`;
     vc.appendChild(card);
   });
 
-  // Hero cards
   const hc = document.getElementById('hero-cards');
   hc.innerHTML = '';
   HEROES.forEach(h => {
@@ -530,8 +559,10 @@ function renderSidePanels() {
     card.innerHTML = `
       <div class="hero-card-top">
         <span class="hero-icon">${h.emoji}</span>
-        <div><div class="hero-name" style="color:${h.color}">${h.name}</div>
-        <div class="hero-technique">${h.technique}</div></div>
+        <div>
+          <div class="hero-name" style="color:${h.color}">${h.name}</div>
+          <div class="hero-technique">${h.technique}</div>
+        </div>
       </div>
       <div class="hero-matches">Matches: ${heroMatchCounts[h.id] || 0}</div>`;
     hc.appendChild(card);
@@ -545,12 +576,10 @@ function renderMoves() {
   document.getElementById('moves-display').textContent = moves;
 }
 function renderMeter() {
-  const fill = document.getElementById('meter-fill');
-  fill.style.width = meterValue + '%';
+  document.getElementById('meter-fill').style.width = meterValue + '%';
   document.getElementById('meter-hero-pct').textContent = `Heroes ${Math.round(meterValue)}%`;
   document.getElementById('meter-villain-pct').textContent = `Curses ${Math.round(100 - meterValue)}%`;
-  const warn = document.getElementById('meter-warning');
-  warn.classList.toggle('show', meterValue < 40);
+  document.getElementById('meter-warning').classList.toggle('show', meterValue < 40);
 }
 
 // ---- TILE CLICK ----
@@ -567,9 +596,7 @@ function onTileClick(r, c) {
   } else {
     const { r: sr, c: sc } = selected;
     tiles.forEach(t => t.classList.remove('selected'));
-
     if (sr === r && sc === c) { selected = null; return; }
-
     const dr = Math.abs(r - sr), dc = Math.abs(c - sc);
     if ((dr === 1 && dc === 0) || (dr === 0 && dc === 1)) {
       selected = null;
@@ -592,7 +619,6 @@ function doSwap(r1, c1, r2, c2) {
 
   const matches = findMatches();
   if (matches.length === 0) {
-    // Swap back
     board[r2][c2] = board[r1][c1];
     board[r1][c1] = tmp;
     isAnimating = false;
@@ -607,7 +633,6 @@ function doSwap(r1, c1, r2, c2) {
 
 function findMatches() {
   const matched = new Set();
-  // Horizontal
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS - 2; c++) {
       const id = board[r][c];
@@ -618,7 +643,6 @@ function findMatches() {
       }
     }
   }
-  // Vertical
   for (let c = 0; c < COLS; c++) {
     for (let r = 0; r < ROWS - 2; r++) {
       const id = board[r][c];
@@ -633,14 +657,12 @@ function findMatches() {
 }
 
 function processMatches(matches) {
-  // Group by character
   const byChar = {};
   matches.forEach(({ r, c, id }) => {
     if (!byChar[id]) byChar[id] = [];
     byChar[id].push({ r, c });
   });
 
-  // Animate matched tiles
   const boardEl = document.getElementById('game-board');
   matches.forEach(({ r, c }) => {
     const tile = boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`);
@@ -648,30 +670,23 @@ function processMatches(matches) {
   });
 
   setTimeout(() => {
-    // Clear matched cells
     matches.forEach(({ r, c }) => { board[r][c] = null; });
 
-    // Handle each matched character
-    let heroMatched = false, villainMatched = false;
-    let heroMatchInfo = null, villainMatchInfo = null;
+    let heroMatchInfo = null, villainMatched = false, villainMatchInfo = null;
 
     Object.entries(byChar).forEach(([id, cells]) => {
       if (isHeroId(id)) {
-        heroMatched = true;
         const hero = heroById(id);
         heroMatchCounts[id] = (heroMatchCounts[id] || 0) + 1;
-        const matchSize = cells.length;
-        const multiplier = matchSize >= 5 ? 3 : matchSize >= 4 ? 2 : 1;
-        // Deal damage to a random alive villain
+        const multiplier = cells.length >= 5 ? 3 : cells.length >= 4 ? 2 : 1;
         const alive = aliveVillains();
         if (alive.length > 0) {
           const target = alive[Math.floor(Math.random() * alive.length)];
           const dmg = hero.dmg * multiplier;
           target.hp = Math.max(0, target.hp - dmg);
-          const pts = dmg * 10;
-          score += pts;
+          score += dmg * 10;
           meterValue = Math.min(95, meterValue + 5);
-          heroMatchInfo = { hero, target, dmg, pts, matchSize };
+          heroMatchInfo = { hero, target, dmg };
           addLog(`<span class="log-hero">${hero.emoji} ${hero.name}</span> used <span class="log-technique">${hero.technique}</span> → <span class="log-villain">${target.name}</span> took ${dmg} dmg`);
         }
       } else if (isVillainId(id)) {
@@ -683,35 +698,20 @@ function processMatches(matches) {
       }
     });
 
-    // Apply gravity
     applyGravity();
-
-    // Refill
     refillBoard(villainMatched);
-    while (!hasValidMoves()) {
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      board[r][c] = randomTile(0.22);
-    }
-  }
-}
+    reshuffleUntilValid();
 
     renderBoard();
     renderSidePanels();
     renderScore();
     renderMeter();
 
-    // Show effects
-    if (heroMatchInfo) {
-      showTechniquePopup(heroMatchInfo.hero, false);
-    }
+    if (heroMatchInfo) showTechniquePopup(heroMatchInfo.hero, false);
     if (villainMatched && villainMatchInfo) {
-      setTimeout(() => {
-        showVillainEffect(villainMatchInfo.villain);
-      }, heroMatchInfo ? 1200 : 0);
+      setTimeout(() => showVillainEffect(villainMatchInfo.villain), heroMatchInfo ? 1200 : 0);
     }
 
-    // Check cascades
     setTimeout(() => {
       const cascades = findMatches();
       if (cascades.length > 0) {
@@ -740,19 +740,15 @@ function applyGravity() {
 }
 
 function refillBoard(spawnVillain) {
-  // If villain matched, spawn extra villain tile
   let extraVillainPos = null;
   if (spawnVillain) {
     const nullCells = [];
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
         if (!board[r][c]) nullCells.push({ r, c });
-    if (nullCells.length > 0) {
+    if (nullCells.length > 0)
       extraVillainPos = nullCells[Math.floor(Math.random() * nullCells.length)];
-    }
   }
-  
-
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
       if (!board[r][c]) {
@@ -767,32 +763,25 @@ function refillBoard(spawnVillain) {
   }
 }
 
-// ---- EFFECTS ----
 function showTechniquePopup(char, isVillain) {
   const popup = document.getElementById('technique-popup');
-  const charEl = document.getElementById('popup-char');
+  document.getElementById('popup-char').textContent = char.name.toUpperCase();
   const techEl = document.getElementById('popup-technique');
-  const subEl = document.getElementById('popup-sub');
-
-  charEl.textContent = char.name.toUpperCase();
   techEl.textContent = char.technique.toUpperCase();
   techEl.style.color = char.color;
+  const subEl = document.getElementById('popup-sub');
   subEl.textContent = isVillain ? '— curse energy surges —' : '— technique activated —';
   subEl.style.color = isVillain ? '#f87171' : '#a3a3bc';
-
-  // Flash
   const flash = document.getElementById('flash-overlay');
   flash.style.background = isVillain ? 'rgba(220,38,38,0.18)' : `${char.color}22`;
   flash.style.opacity = '1';
   setTimeout(() => flash.style.opacity = '0', 200);
-
   popup.classList.add('show');
   setTimeout(() => popup.classList.remove('show'), 1100);
 }
 
 function showVillainEffect(villain) {
   showTechniquePopup(villain, true);
-  // Board shake
   const boardEl = document.getElementById('game-board');
   boardEl.style.animation = 'shakeBoard 0.4s ease';
   setTimeout(() => boardEl.style.animation = '', 400);
@@ -801,28 +790,23 @@ function showVillainEffect(villain) {
 function addLog(html) {
   logEntries.unshift(html);
   if (logEntries.length > 6) logEntries.pop();
-  const logEl = document.getElementById('effect-log');
-  logEl.innerHTML = logEntries.map(e => `<div class="effect-log-entry">${e}</div>`).join('');
+  document.getElementById('effect-log').innerHTML = logEntries.map(e => `<div class="effect-log-entry">${e}</div>`).join('');
 }
 
-// ---- GAME END ----
 function checkGameEnd() {
-  const allDead = VILLAINS.every(v => v.hp <= 0);
-  if (allDead) { showOverlay(true); return; }
+  if (VILLAINS.every(v => v.hp <= 0)) { showOverlay(true); return; }
   if (moves <= 0) { showOverlay(false); return; }
 }
 
 function showOverlay(win) {
   const overlay = document.getElementById('game-overlay');
   const title = document.getElementById('overlay-title');
-  const scoreEl = document.getElementById('overlay-score');
   title.textContent = win ? 'MISSION COMPLETE' : 'CURSES PREVAIL';
   title.className = `overlay-title ${win ? 'win' : 'lose'}`;
-  scoreEl.textContent = score.toLocaleString();
+  document.getElementById('overlay-score').textContent = score.toLocaleString();
   overlay.classList.add('show');
 }
 
-// ---- START ----
 initGame();
 </script>
 </body>
